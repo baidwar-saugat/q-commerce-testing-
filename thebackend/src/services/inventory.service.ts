@@ -1,30 +1,47 @@
 import prisma from "../utils/prisma";
 
-// Admin assigns item to store
+// 1. Assign Master Product to Store (Create/Update)
 export const addProductToStore = async (storeId: string, data: any) => {
   return prisma.storeProduct.upsert({
-    where: { storeId_productId: { storeId, productId: data.productId } },
+    where: {
+      storeId_productId: {
+        storeId,
+        productId: data.productId,
+      },
+    },
     update: { ...data },
-    create: { storeId, ...data },
+    create: {
+      storeId,
+      ...data,
+    },
   });
 };
 
-// Get Store Menu (User Facing)
+// 2. Get Menu for User App
 export const getStoreMenu = async (storeId: string) => {
   return prisma.storeProduct.findMany({
-    where: { storeId, isAvailable: true },
-    include: { product: { include: { category: true } } },
+    where: { storeId },
+    include: {
+      product: {
+        include: { category: true },
+      },
+    },
   });
 };
 
-// Partner Toggle (On/Off)
-export const updateStock = async (
+// 3. Update Stock (The Missing Function)
+export const updateStoreStock = async (
   storeId: string,
   productId: string,
   data: any
 ) => {
   return prisma.storeProduct.update({
-    where: { storeId_productId: { storeId, productId } },
+    where: {
+      storeId_productId: {
+        storeId,
+        productId,
+      },
+    },
     data,
   });
 };

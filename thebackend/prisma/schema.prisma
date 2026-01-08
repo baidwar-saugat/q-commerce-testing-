@@ -17,6 +17,7 @@ model User {
 
   // Relations
   orders       Order[]
+  riderOrders  Order[]  @relation("RiderOrders") // NEW: As a Rider
   
   // Fix: Added relation name "StoreManager" to link correctly with Store
   managedStore Store?   @relation("StoreManager") 
@@ -92,6 +93,9 @@ model Order {
   id          String      @id @default(uuid())
   userId      String
   storeId     String
+   // NEW: Track the Rider
+  riderId     String?     // Nullable because initially no rider is assigned
+  rider       User?       @relation("RiderOrders", fields: [riderId], references: [id])
   total       Float
   status      OrderStatus @default(PENDING)
   createdAt   DateTime    @default(now())

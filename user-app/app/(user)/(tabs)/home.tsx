@@ -7,15 +7,18 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-// FIX: Use Safe Area Context
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useUserStore } from "../../src/store/userStore";
-import LocationModal from "../../src/components/LocationModal";
-import { MapPin, ChevronDown } from "lucide-react-native";
-import { api } from "../../src/services/api";
+
+// 👇 FIXED IMPORTS (Added extra ../)
+import { useUserStore } from "../../../src/store/userStore";
+import LocationModal from "../../../src/components/LocationModal";
+import { api } from "../../../src/services/api";
+// 👆
+
+import { ChevronDown } from "lucide-react-native";
 
 export default function HomeScreen() {
-  const { location, activeStore } = useUserStore();
+  const { location, activeStore, addToCart } = useUserStore(); // Added addToCart
   const [modalVisible, setModalVisible] = useState(false);
   const [menu, setMenu] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -35,6 +38,16 @@ export default function HomeScreen() {
     const data = await api.get(`/inventory/${storeId}/menu`);
     setMenu(data || []);
     setLoading(false);
+  };
+
+  const handleAddToCart = (item: any) => {
+    addToCart({
+      productId: item.productId,
+      name: item.product.name,
+      price: item.price,
+      quantity: 1,
+    });
+    alert("Added to Cart!");
   };
 
   return (
@@ -93,7 +106,10 @@ export default function HomeScreen() {
               <View style={styles.imagePlaceholder}>
                 <Text style={{ color: "#fff", fontSize: 10 }}>IMG</Text>
               </View>
-              <TouchableOpacity style={styles.addBtn}>
+              <TouchableOpacity
+                style={styles.addBtn}
+                onPress={() => handleAddToCart(item)}
+              >
                 <Text style={styles.addBtnText}>ADD</Text>
               </TouchableOpacity>
             </View>
