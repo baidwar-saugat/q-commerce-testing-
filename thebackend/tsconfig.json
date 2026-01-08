@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    /* 1. Language & Module System */
+    "target": "es2016" /* Compile to JS version Node.js understands */,
+    "module": "commonjs" /* Output standard Node.js 'require' code */,
+    "moduleResolution": "node" /* Standard Node module resolution */,
+
+    /* 2. File Structure */
+    "rootDir": "./src" /* Your code is here */,
+    "outDir": "./dist" /* Build output goes here */,
+
+    /* 3. Interop (Crucial for Express/Cors) */
+    "esModuleInterop": true /* Allows 'import express from "express"' */,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true /* Allows importing .json files */,
+
+    /* 4. Strictness (Keep this high for clean code) */
+    "strict": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true /* Ignore errors inside library definition files */,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

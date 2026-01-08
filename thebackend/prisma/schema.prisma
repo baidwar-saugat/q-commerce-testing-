@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// --- 1. USER MODEL ---
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String
+  password     String   @default("123456")
+  createdAt    DateTime @default(now())
+
+  // Relations
+  orders       Order[]
+  
+  // Fix: Added relation name "StoreManager" to link correctly with Store
+  managedStore Store?   @relation("StoreManager") 
+}
+
+// --- 2. MASTER CATALOG ---
+model Category {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  image     String?
+  isActive  Boolean   @default(true)
+  products  Product[]
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  image       String?
+  basePrice   Float
+  isAdult     Boolean  @default(false)
+  
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+  
+  storeStock  StoreProduct[]
+  
+  // Fix: Added opposite relation to OrderItem
+  orderItems  OrderItem[] 
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// --- 3. STORE LOCATIONS ---
+model Store {
+  id          String   @id @default(uuid())
+  name        String
+  address     String
+  latitude    Float
+  longitude   Float
+  radiusKm    Float    @default(3.0)
+  isActive    Boolean  @default(true)
+  
+  inventory   StoreProduct[]
+  
+  // Fix: Added opposite relation to Order
+  orders      Order[]
+
+  // Fix: Added opposite relation to User (Manager)
+  managerId   String?  @unique
+  manager     User?    @relation("StoreManager", fields: [managerId], references: [id])
+}
+
+// --- 4. INVENTORY MATRIX ---
+model StoreProduct {
+  id          String   @id @default(uuid())
+  storeId     String
+  productId   String
+  
+  isAvailable Boolean  @default(true)
+  price       Float?   
+  stock       Int      @default(0)
+
+  store       Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([storeId, productId])
+}
+
+// --- 5. ORDERS ---
+model Order {
+  id          String      @id @default(uuid())
+  userId      String
+  storeId     String
+  total       Float
+  status      OrderStatus @default(PENDING)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  user        User        @relation(fields: [userId], references: [id])
+  store       Store       @relation(fields: [storeId], references: [id])
+  items       OrderItem[]
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Float   
+
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+enum OrderStatus {
+  PENDING
+  PREPARING
+  READY
+  PICKED_UP
+  COMPLETED
+  CANCELLED
+}

@@ -1,0 +1,39 @@
+{
+  "name": "thebackend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "dev:nodemon": "nodemon --exec tsx src/main.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "p-gen": "prisma generate",
+    "p-push": "prisma db push",
+    "p-studio": "prisma studio",
+    "p-migrate": "prisma migrate dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.24.0",
+  "dependencies": {
+    "@prisma/client": "5.22.0",
+    "@ts-rest/core": "^3.52.1",
+    "@ts-rest/express": "^3.52.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "helmet": "^8.1.0",
+    "zod": "^4.3.5"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "nodemon": "^3.1.11",
+    "prisma": "5.22.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}

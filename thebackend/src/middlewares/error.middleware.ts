@@ -1,0 +1,14 @@
+import { Request, Response, NextFunction } from "express";
+
+export const globalErrorHandler = (
+  err: any,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  err.statusCode = err.statusCode || 500;
+  res.status(err.statusCode).json({
+    status: err.status || "error",
+    message: err.message,
+  });
+};
